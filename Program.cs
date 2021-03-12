@@ -29,7 +29,7 @@ namespace HomeWork2
                             {
                                 Console.WriteLine("{0} , {1}", t1, p);
                             }
-                            else if (Math.Abs(mousepositionX - t1) <= Math.Abs(mousepositionX - t2))
+                            else if (Math.Abs(mousepositionX - t1) >= Math.Abs(mousepositionX - t2))
                             {
                                 Console.WriteLine("{0} , {1}", t2, p);
                             }
