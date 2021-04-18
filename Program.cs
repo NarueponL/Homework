@@ -1,62 +1,90 @@
 ﻿using System;
 
-namespace HomeWork4_1
+namespace HomeWork4_2
 {
     class Program
     {
-        static void pascalNum(int N)
+        static bool checkProcess = false;
+        static bool replicateCheck = false;
+        static bool checkInput = false;
+        static bool IsValidSequence(string halfDNASequence)
         {
-            for (int i = 0; i <= N; i++) 
+            foreach(char nucleotide in halfDNASequence)
             {
-                for(int j = 0; j <= N; j++)
+                if (!"ATCG".Contains(nucleotide))
                 {
-                    if (j <= i) //ไม่คิด j ที่มากกว่า i
-                    {
-                        pascalFomula(i, j);
-                    }
+                    return false;
                 }
-                Console.WriteLine();
             }
+            return true;
         }
-
-        static void pascalFomula(int n , int r)
+        static string ReplicateSeqeunce(string halfDNASequence)
         {
-            
-            int a = factorial(n)/(factorial(r)*factorial(n-r));
-
-            Console.Write(" {0}",a);
-            
-        }
-
-        static int factorial(int n)
-        {
-            int x = 1;
-            for(int i=n;i>=1; i--)
+            string result = "";
+            foreach(char nucleotide in halfDNASequence)
             {
-                x = x * i;
+                result += "TAGC"["ATCG".IndexOf(nucleotide)];
             }
-            return x;
+            return result;
+        }
+        static void replicatePart(string input)
+        {
+            do
+            {
+                Console.WriteLine("Do you want to replicate it ? (Y/N)");
+                char replicate = char.Parse(Console.ReadLine());
+                switch (replicate)
+                {
+                    case 'Y':                        
+                        Console.WriteLine("Replicates half DNA sequence : "+ ReplicateSeqeunce(input));
+                        replicateCheck = true;
+                        break;
+                    case 'N':
+                        replicateCheck = true;
+                        break;
+                    default:
+                        Console.WriteLine("Please Input Y or N");
+                        break;
+                }
+            } while (replicateCheck == false);
         }
 
         static void Main(string[] args)
-        {
-            int Input;
-            bool checkInput = false;
+        {            
             do
             {
-                Input = int.Parse(Console.ReadLine());
-                if (Input < 0) 
+                string input = Console.ReadLine();
+                if (IsValidSequence(input) == false)
                 {
-                    Console.WriteLine("Invalid Pascal’s triangle row number.");
+                    Console.WriteLine("That half DNA sequence is invalid.");
                 }
-                else
+                else 
                 {
-                    checkInput = true;
+                    Console.WriteLine("Current half DNA sequence : "+input);
+                    replicatePart(input);
                 }
-                
-            } while (checkInput == false);
-            pascalNum(Input);
-        }
 
+                Console.WriteLine("Do you want to process another sequence ? (Y/N)");
+                char process = char.Parse(Console.ReadLine());
+                do
+                {
+                    switch (process)
+                    {
+                        case 'Y':
+                            checkInput = true;
+                            break;
+                        case 'N':
+                            checkInput = true;
+                            checkProcess = true;
+
+                            break;
+                        default:
+                            Console.WriteLine("Please Input Y or N");
+                            break;
+                    }
+                } while (checkInput == false);
+                
+            } while (checkProcess == false);            
+        }
     }
 }
