@@ -1,90 +1,79 @@
 ﻿using System;
 
-namespace HomeWork4_2
+namespace Midterm_Exam
 {
     class Program
     {
-        static bool checkProcess = false;
-        static bool replicateCheck = false;
-        static bool checkInput = false;
-        static bool IsValidSequence(string halfDNASequence)
-        {
-            foreach(char nucleotide in halfDNASequence)
-            {
-                if (!"ATCG".Contains(nucleotide))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-        static string ReplicateSeqeunce(string halfDNASequence)
-        {
-            string result = "";
-            foreach(char nucleotide in halfDNASequence)
-            {
-                result += "TAGC"["ATCG".IndexOf(nucleotide)];
-            }
-            return result;
-        }
-        static void replicatePart(string input)
-        {
-            do
-            {
-                Console.WriteLine("Do you want to replicate it ? (Y/N)");
-                char replicate = char.Parse(Console.ReadLine());
-                switch (replicate)
-                {
-                    case 'Y':                        
-                        Console.WriteLine("Replicates half DNA sequence : "+ ReplicateSeqeunce(input));
-                        replicateCheck = true;
-                        break;
-                    case 'N':
-                        replicateCheck = true;
-                        break;
-                    default:
-                        Console.WriteLine("Please Input Y or N");
-                        break;
-                }
-            } while (replicateCheck == false);
-        }
-
-        static void Main(string[] args)
+        static double modefLength(out double fLength)
         {            
+            bool checkfLength = false;
             do
             {
-                string input = Console.ReadLine();
-                if (IsValidSequence(input) == false)
+                fLength = double.Parse(Console.ReadLine());
+                if (fLength < 0) 
                 {
-                    Console.WriteLine("That half DNA sequence is invalid.");
+                    Console.WriteLine("Invalid fLength Please input again");
                 }
-                else 
+                else
                 {
-                    Console.WriteLine("Current half DNA sequence : "+input);
-                    replicatePart(input);
+                    checkfLength = true;                    
                 }
-
-                Console.WriteLine("Do you want to process another sequence ? (Y/N)");
-                char process = char.Parse(Console.ReadLine());
-                do
+            } while (checkfLength == false);
+            return fLength;
+        }
+        static double modeFov(out double fov)
+        {            
+            bool checkFov = false;
+            do
+            {
+                fov = double.Parse(Console.ReadLine());
+                if (fov < 0.1 && fov >6.28)
                 {
-                    switch (process)
-                    {
-                        case 'Y':
-                            checkInput = true;
-                            break;
-                        case 'N':
-                            checkInput = true;
-                            checkProcess = true;
+                    Console.WriteLine("Invalid fLength Please input again");
+                }
+                else
+                {
+                    checkFov = true;                    
+                }
+            } while (checkFov == false);
+            return fov;
+        }
+        static void Main(string[] args)
+        {
+            bool checkFlimBW = false;
+            double FLength, Fov, flimBackWidth;
+            string mode = Console.ReadLine();
 
-                            break;
-                        default:
-                            Console.WriteLine("Please Input Y or N");
-                            break;
-                    }
-                } while (checkInput == false);
-                
-            } while (checkProcess == false);            
+            do
+            {
+                flimBackWidth = double.Parse(Console.ReadLine());
+                if (flimBackWidth<0)
+                {
+                    Console.WriteLine("Invalid filmBlackWidth Please input again");
+                }
+                else
+                {
+                    checkFlimBW = true;
+                }
+            } while (checkFlimBW == false);     
+
+            switch (mode)
+            {
+                case "fLength":
+                    FLength = modefLength(out FLength);
+                    Fov = 2 * Math.Atan(flimBackWidth/(2*FLength));
+                    Console.WriteLine("fLength = " + FLength);
+                    Console.WriteLine("fov = " + Fov);
+                    break;
+                case "fov":
+                    Fov = modeFov(out Fov);
+                    FLength = flimBackWidth / (2 * Math.Tan(Fov / 2));
+                    Console.WriteLine("fLength = " + FLength);
+                    Console.WriteLine("fov = " + Fov);
+                    break;
+            }
+            
+
         }
     }
 }
