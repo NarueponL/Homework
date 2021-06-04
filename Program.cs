@@ -1,107 +1,152 @@
 ﻿using System;
 
-namespace HomeWork5
+namespace HomeWork6
 {
     class Program
     {
-        static double[,] ReadImageDataFromFile(string imageDataFilePath)
+        struct Problem
         {
-            string[] lines = System.IO.File.ReadAllLines(imageDataFilePath);
-            int imageHeight = lines.Length;
-            int imageWidth = lines[0].Split(',').Length;
-            double[,] imageDataArray = new double[imageHeight, imageWidth];
+            public string Message;
+            public int Answer;
 
-            for (int i = 0; i < imageHeight; i++)
+            public Problem(string message, int answer)
             {
-                string[] items = lines[i].Split(',');
-                for (int j = 0; j < imageWidth; j++)
-                {
-                    imageDataArray[i, j] = double.Parse(items[j]);
-                }
+                Message = message;
+                Answer = answer;
             }
-            return imageDataArray;
         }
 
-        static double[,] WriteExpandedDataArray(double[,] imageDataArray,int expandedCollumn,int expandedRow,int dataArrayCollumn,int dataArrayRow,int convolutionCollumn,int convolutionRow)
+        static Problem[] GenerateRandomProblems(int numProblem)
         {
-            double[,] expandedDataArray = new double[expandedCollumn, expandedRow];
-            for(int i = 0; i < expandedCollumn; i++)
+            Problem[] randomProblems = new Problem[numProblem];
+
+            Random rnd = new Random();
+            int x, y;
+
+            for (int i = 0; i < numProblem; i++)
             {
-                for(int j = 0; j < expandedRow; j++)
-                {                    
-                    expandedDataArray[i, j] = imageDataArray[(i+(dataArrayCollumn-(convolutionCollumn/2)))%dataArrayCollumn, (j + (dataArrayRow-(convolutionRow/2)))% dataArrayRow];
-                }
+                x = rnd.Next(50);
+                y = rnd.Next(50);
+                if (rnd.NextDouble() >= 0.5)
+                    randomProblems[i] = new Problem(String.Format("{0} + {1} = ?", x, y), x + y);                    
+                else
+                    randomProblems[i] = new Problem(String.Format("{0} - {1} = ?", x, y), x - y);
             }
-            return expandedDataArray;
+            return randomProblems;
         }
 
-        static double[,] ConvolutionOp(double[,] expandedDataArray, double[,] convolutionArray, int dataArrayCollumn, int dataArrayRow)
+        enum Difficulty
         {
-            double[,] outputImageArray = new double[dataArrayCollumn, dataArrayRow];
-
-            for(int i=0;i< dataArrayCollumn; i++)
-            {
-                for (int j = 0; j < dataArrayRow; j++)
-                {
-
-                    for(int k = 0; k < convolutionArray.GetLength(0); k++)
-                    {
-                        for (int l = 0; l < convolutionArray.GetLength(1); l++)
-                        {
-                            
-                            outputImageArray[i, j] += expandedDataArray[i+k,j+l] * convolutionArray[k, l];
-                        }
-                    }               
-                }
-            }
-            return outputImageArray;
+            Easy,
+            Normal,
+            Hard
         }
 
-        static void WriteImageDataToFile(string imageDataFilePath,double[,] imageDataArray)
+        static int Setting()
         {
-            string imageDataString = "";
-            for (int i = 0; i < imageDataArray.GetLength(0); i++)
-            {
-                for (int j = 0; j < imageDataArray.GetLength(1) - 1; j++)
-                {
-                    imageDataString += imageDataArray[i, j] + ", ";
-                }
-                imageDataString += imageDataArray[i,
-                                                imageDataArray.GetLength(1) - 1];
-                imageDataString += "\n";
-            }
+            bool checkDifficulty = false;
+            int newDifficulty = 0;
 
-            System.IO.File.WriteAllText(imageDataFilePath, imageDataString);
+            while (checkDifficulty == false)
+            {
+                Console.WriteLine("0 = Easy\t1 = Normal\t2 = Hard");
+                Console.Write("Select difficulty : ");
+                newDifficulty = int.Parse(Console.ReadLine());
+                if (newDifficulty >= 0 && newDifficulty <= 2) 
+                {
+                    checkDifficulty = true;                   
+                }
+                else
+                {
+                    Console.WriteLine("Plese input 0 - 2");
+                }
+            }
+            return newDifficulty;
+        }
+
+        static double Play(int difficulty)
+        {
+            double score = 0, startTime, finishTime;
+            int allNumProblem = 0, correctAnswer = 0;
+            Problem[] randomProblems = GenerateRandomProblems(0);
+            
+            //จน.ข้อตามความยาก
+            switch (difficulty)
+            {
+                case 0:
+                    allNumProblem = 3;
+                    break;
+                case 1:
+                    allNumProblem = 5;
+                    break;
+                case 2:
+                    allNumProblem = 7;
+                    break;
+            }
+            randomProblems = GenerateRandomProblems(allNumProblem);
+            //เริ่มนับเวลา
+            startTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            //โจทย์
+            for (int i = 0; i < allNumProblem; i++)
+            {
+                Console.WriteLine(randomProblems[i].Message);
+                int inputAnswer = int.Parse(Console.ReadLine());
+                if(inputAnswer == randomProblems[i].Answer)
+                {
+                    correctAnswer += 1;
+                }
+            }
+            //หยุดนับเวลา
+            finishTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            
+            //คำนวณแต้ม
+            score = ScoreCalculate(startTime,finishTime,allNumProblem,correctAnswer,difficulty);
+
+            return score;
+        }
+
+        static double ScoreCalculate(double t1,double t2,double Qa,double Qc,double d)
+        {
+            double S;
+            double dt = t2 - t1;
+
+            //คำนวณแต้ม
+            S = (Qc / Qa) * (25 - Math.Pow(d, 2)) / Math.Max(dt, 25 - (Math.Pow(d, 2))) * Math.Pow(2*d + 1, 2);
+            
+            return S;
         }
 
         static void Main(string[] args)
         {
-            //********  รับข้อมูล  ********
-            Console.Write("Input Image data Address : ");
-            string imageData = Console.ReadLine();
-            double[,] imageDataArray = ReadImageDataFromFile(imageData);
+            double score = 0;
+            int difficulty = 0;
+            bool checkOption = false;
+            while (checkOption == false)
+            {
+                Console.WriteLine("Score : {0} , Difficulty : {1}", score, (Difficulty)difficulty);
+                Console.WriteLine("0 = Play Game\t1 = Setting\t2 = Exit");
+                //เลือกหน้า
+                Console.Write("Select option : ");
+                int option = int.Parse(Console.ReadLine());
+                Console.WriteLine();
 
-            Console.Write("Input Convolution Kernel Address : ");
-            string convolutionKernel = Console.ReadLine();
-            ReadImageDataFromFile(convolutionKernel);
-            double[,] convolutionArray = ReadImageDataFromFile(convolutionKernel);
-
-            Console.Write("Output Address : ");
-            string outputAddress = Console.ReadLine();
-
-            //********  ขนาดของArrayที่ต่อเติม  ********
-            int expandedArrayCollumn = imageDataArray.GetLength(0) + convolutionArray.GetLength(0) - 1;
-            int expandedArrayRow = imageDataArray.GetLength(1) + convolutionArray.GetLength(1) - 1;
-
-            //********  สร้างArrayที่ต่อเติม  ********
-            double[,] expandedDataArray = WriteExpandedDataArray(imageDataArray, expandedArrayCollumn, expandedArrayRow, imageDataArray.GetLength(0), imageDataArray.GetLength(1), convolutionArray.GetLength(0), convolutionArray.GetLength(1));
-            
-            //********  การดำเนินการ Convolve  ********
-            double[,] outputImageData = ConvolutionOp(expandedDataArray, convolutionArray, imageDataArray.GetLength(0), imageDataArray.GetLength(1));
-
-            //********  ส่งออกไฟล์  ********
-            WriteImageDataToFile(outputAddress, outputImageData);
-
+                switch (option)
+                {
+                    case 0:
+                        score = Play(difficulty);
+                        break;
+                    case 1:
+                        difficulty =  Setting();
+                        break;
+                    case 2:
+                        checkOption = true;
+                        break;
+                    default:
+                        Console.WriteLine("Plese input 0 - 2");
+                        break;
+                }
+                Console.WriteLine("********************************************************");
+            }
         }
-    }
+    }   
 }
