@@ -1,152 +1,145 @@
 ﻿using System;
 
-namespace HomeWork6
+namespace HomeWork6_2
 {
     class Program
     {
-        struct Problem
+        struct Namefood
         {
-            public string Message;
-            public int Answer;
-
-            public Problem(string message, int answer)
+            public string Name;
+            public Namefood(string foodName)
             {
-                Message = message;
-                Answer = answer;
+                Name = foodName;
             }
         }
-
-        static Problem[] GenerateRandomProblems(int numProblem)
-        {
-            Problem[] randomProblems = new Problem[numProblem];
-
-            Random rnd = new Random();
-            int x, y;
-
-            for (int i = 0; i < numProblem; i++)
-            {
-                x = rnd.Next(50);
-                y = rnd.Next(50);
-                if (rnd.NextDouble() >= 0.5)
-                    randomProblems[i] = new Problem(String.Format("{0} + {1} = ?", x, y), x + y);                    
-                else
-                    randomProblems[i] = new Problem(String.Format("{0} - {1} = ?", x, y), x - y);
-            }
-            return randomProblems;
-        }
-
-        enum Difficulty
-        {
-            Easy,
-            Normal,
-            Hard
-        }
-
-        static int Setting()
-        {
-            bool checkDifficulty = false;
-            int newDifficulty = 0;
-
-            while (checkDifficulty == false)
-            {
-                Console.WriteLine("0 = Easy\t1 = Normal\t2 = Hard");
-                Console.Write("Select difficulty : ");
-                newDifficulty = int.Parse(Console.ReadLine());
-                if (newDifficulty >= 0 && newDifficulty <= 2) 
-                {
-                    checkDifficulty = true;                   
-                }
-                else
-                {
-                    Console.WriteLine("Plese input 0 - 2");
-                }
-            }
-            return newDifficulty;
-        }
-
-        static double Play(int difficulty)
-        {
-            double score = 0, startTime, finishTime;
-            int allNumProblem = 0, correctAnswer = 0;
-            Problem[] randomProblems = GenerateRandomProblems(0);
-            
-            //จน.ข้อตามความยาก
-            switch (difficulty)
-            {
-                case 0:
-                    allNumProblem = 3;
-                    break;
-                case 1:
-                    allNumProblem = 5;
-                    break;
-                case 2:
-                    allNumProblem = 7;
-                    break;
-            }
-            randomProblems = GenerateRandomProblems(allNumProblem);
-            //เริ่มนับเวลา
-            startTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            //โจทย์
-            for (int i = 0; i < allNumProblem; i++)
-            {
-                Console.WriteLine(randomProblems[i].Message);
-                int inputAnswer = int.Parse(Console.ReadLine());
-                if(inputAnswer == randomProblems[i].Answer)
-                {
-                    correctAnswer += 1;
-                }
-            }
-            //หยุดนับเวลา
-            finishTime = DateTimeOffset.Now.ToUnixTimeSeconds();
-            
-            //คำนวณแต้ม
-            score = ScoreCalculate(startTime,finishTime,allNumProblem,correctAnswer,difficulty);
-
-            return score;
-        }
-
-        static double ScoreCalculate(double t1,double t2,double Qa,double Qc,double d)
-        {
-            double S;
-            double dt = t2 - t1;
-
-            //คำนวณแต้ม
-            S = (Qc / Qa) * (25 - Math.Pow(d, 2)) / Math.Max(dt, 25 - (Math.Pow(d, 2))) * Math.Pow(2*d + 1, 2);
-            
-            return S;
-        }
-
         static void Main(string[] args)
         {
-            double score = 0;
-            int difficulty = 0;
-            bool checkOption = false;
-            while (checkOption == false)
-            {
-                Console.WriteLine("Score : {0} , Difficulty : {1}", score, (Difficulty)difficulty);
-                Console.WriteLine("0 = Play Game\t1 = Setting\t2 = Exit");
-                //เลือกหน้า
-                Console.Write("Select option : ");
-                int option = int.Parse(Console.ReadLine());
-                Console.WriteLine();
+            Namefood[] product = new Namefood[5] ;
+            bool stopInputFood = false;
+            bool stopBunsChoice = false;
+            bool stopAllMember = false;
+            bool checkBuyBunChoice = false;
+            int numProductMain = 0;
+            int numProductMore = 0;
 
-                switch (option)
+            //สั่งสินค้า
+            Console.Write("Input Food Name : ");
+            product[numProductMain].Name = Console.ReadLine();
+            numProductMain ++;
+            do
+            {
+                Console.Write("Want more food ? (Y/N) : ");
+                char moreFoodChoice = char.Parse(Console.ReadLine());
+                if (numProductMain == 5)
                 {
-                    case 0:
-                        score = Play(difficulty);
+                    Console.WriteLine("Sorry you bought too much");
+                    stopInputFood = true;
+                    break;
+                }
+                else
+                {
+                    switch (moreFoodChoice)
+                    {
+                        case 'Y':
+                            Console.Write("Input Food Name : ");
+                            product[numProductMain].Name = Console.ReadLine();
+                            numProductMain++;
+                            break;
+                        case 'N':
+                            stopInputFood = true;
+                            break;
+                        default:
+                            Console.WriteLine("Select Again?");
+                            break;
+                    }
+                }                
+            } while (stopInputFood == false);
+
+            //รับขนมจีบซาลาเปาเพิ่มไหมคะ
+            Console.Write("Would you like more dumpling and buns? (Y/N) : ");
+            char bunsChoice = char.Parse(Console.ReadLine());
+            char buyBunsChoice = '-' ;
+            do
+            {
+                switch (bunsChoice)
+                {
+                    case 'Y':
+                        do
+                        {
+                            Console.Write("Get dumplings or buns(D = dumbling / B = bun) : ");
+                            buyBunsChoice = char.Parse(Console.ReadLine());
+                            switch (buyBunsChoice)
+                            {
+                                case 'D':                                          
+                                    checkBuyBunChoice = true;
+                                    break;
+                                case 'B':                                                                      
+                                    checkBuyBunChoice = true;
+                                    break;
+                                default:
+                                    break;
+                            }                            
+                        } while (checkBuyBunChoice == false);
+                        numProductMore++;
+                        stopBunsChoice = true;
                         break;
-                    case 1:
-                        difficulty =  Setting();
-                        break;
-                    case 2:
-                        checkOption = true;
+                    case 'N':
+                        stopBunsChoice = true;
                         break;
                     default:
-                        Console.WriteLine("Plese input 0 - 2");
+                        Console.WriteLine("Select Again?");
                         break;
                 }
-                Console.WriteLine("********************************************************");
+            } while (stopBunsChoice == false);
+
+            //มี All member ไหม
+            Console.Write("Do you have all members? (Y/N) : ");
+            char allMemberChoice = char.Parse(Console.ReadLine());
+            int allmemberNum = 0;
+            do
+            {
+                switch (allMemberChoice)
+                {
+                    case 'Y':
+                        Console.WriteLine("Please enter All member number : ");
+                        allmemberNum = int.Parse(Console.ReadLine());
+                        stopAllMember = true;                       
+                        break;
+                    case 'N':
+                        stopAllMember = true;
+                        break;
+                    default:
+                        Console.WriteLine("Select Again?");
+                        break;
+                }
+            } while (stopAllMember == false);
+
+            //outputสลิป
+            Console.WriteLine("*************************************************");
+            Console.WriteLine("Receipt");
+            int NumProductTotal = numProductMain + numProductMore;
+            if (allMemberChoice == 'Y')
+            {
+                Console.WriteLine("All member : "+allmemberNum);
             }
+            Console.WriteLine("Total number of items : " + NumProductTotal);
+
+            for (int i = 0; i < numProductMain; i++)
+            {
+                Console.WriteLine(product[i].Name);
+            }
+            switch (buyBunsChoice)
+            {
+                case 'D':
+                    Console.WriteLine("dumpling");
+                    break;
+                case 'B':
+                    Console.WriteLine("buns");
+                    break;
+                default:
+                    break;
+            }
+            Console.WriteLine("Thankyou for using service");
         }
-    }   
+    }
 }
