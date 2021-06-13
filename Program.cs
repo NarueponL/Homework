@@ -1,55 +1,56 @@
 ﻿using System;
 
-namespace Final_1
+namespace Final_2
 {
     class Program
-    {
+    {        
+        enum name
+        {
+            ice,
+            pp,
+            arch,
+            ohm
+
+        }
         static void Main(string[] args)
         {
-            int[,] number = new int[3,3];
-            int addNumber;
-            //input
-            for (int i = 0; i < 3; i++)
+            int allnum = int.Parse(Console.ReadLine());
+            int[] allnumdata = new int[allnum];
+            for(int i = 0; i < allnum; i++)
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    number[i, j] = int.Parse(Console.ReadLine());
-                    
-                }
+                allnumdata[i] = int.Parse(Console.ReadLine());
             }
-            //output
-            addNumber = int.Parse(Console.ReadLine());
-            bool end = false;
-            foreach(int num in number)
-            {                
-                if (addNumber == num)
-                {
-                    Console.WriteLine("The number is available");
-                    end = true;
-                    break;
-                }
-                
-            }
-            if(end == false)
+            sort(allnumdata,allnum);
+            output(allnumdata, allnum);
+        }
+
+        static void sort(int[] data,int num)
+        {
+            for (int i = num-1; i < num; i--)
             {
-                for (int i = 0; i < 3; i++)
+                for(int j = 0; j < i; j++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    if (data[j] > data[j + 1])
                     {
-                        if (number[i, j] != 0)
-                        {
-                            Console.Write(number[i, j]);
-                        }
-                        else if (number[i, j] == 0)
-                        {
-                            Console.Write(addNumber);
-                        }
+                        int x = data[j];
+                        data[j] = data[j + 1];
+                        data[j + 1] = x;
                     }
-                    Console.WriteLine();
                 }
             }
         }
-        
+        static void output(int[] data,int num)
+        {
+            for (int i = 0; i< 4; i++)
+            {
+                Console.Write("{0}'s Sort ", (name)i);
+                for(int j = 0; j < num; j++)
+                {
+                    Console.Write("{0} ",data[j]);
+                }
+                Console.WriteLine();
+            }
+}
         
     }
 }
