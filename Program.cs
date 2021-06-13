@@ -1,56 +1,85 @@
 ﻿using System;
 
-namespace Final_2
+namespace Final_3
 {
     class Program
-    {        
-        enum name
+    {
+        static double FindMax(double[] data)
         {
-            ice,
-            pp,
-            arch,
-            ohm
+            double maxValue = 0; 
+            for(int i = 0; i< data.Length-1; i++)
+            {
+                maxValue = Math.Max(data[i], data[i + 1]);
+            }
+            return maxValue;
 
+        }
+        static double FindMin(double[] data)
+        {
+            double minValue = 0;
+            for (int i = 0; i < data.Length-1 - 1; i++)
+            {
+                minValue = (int)Math.Min(data[i], data[i + 1]);
+            }
+            return minValue;
+        }
+        static double FindMean(double[] data)
+        {
+            double meanValue = 0;
+            for(int i = 0; i < data.Length; i++)
+            {
+                meanValue += data[i];
+            }
+            meanValue /= data.Length;
+            return meanValue;
         }
         static void Main(string[] args)
         {
-            int allnum = int.Parse(Console.ReadLine());
-            int[] allnumdata = new int[allnum];
-            for(int i = 0; i < allnum; i++)
+            bool checkInput = false;
+            bool checkFind = false;
+            double[] inputData =new double[0];
+            //inputnumber
+            do
             {
-                allnumdata[i] = int.Parse(Console.ReadLine());
-            }
-            sort(allnumdata,allnum);
-            output(allnumdata, allnum);
-        }
-
-        static void sort(int[] data,int num)
-        {
-            for (int i = num-1; i < num; i--)
-            {
-                for(int j = 0; j < i; j++)
+                string input = Console.ReadLine();
+                if (input == "End")
                 {
-                    if (data[j] > data[j + 1])
+                    checkInput = true;
+                }
+                else
+                {
+                    double[] collection = new double[inputData.Length + 1];
+                    for(int i = 0; i < inputData.Length; i++)
                     {
-                        int x = data[j];
-                        data[j] = data[j + 1];
-                        data[j + 1] = x;
+                        collection[i] = inputData[i];
                     }
+                    collection[collection.Length - 1] = double.Parse(input);
+                    inputData = collection;
                 }
-            }
-        }
-        static void output(int[] data,int num)
-        {
-            for (int i = 0; i< 4; i++)
+            } while (checkInput == false);
+            //inputmethod
+            do
             {
-                Console.Write("{0}'s Sort ", (name)i);
-                for(int j = 0; j < num; j++)
+                string inputFind = Console.ReadLine();
+                switch (inputFind)
                 {
-                    Console.Write("{0} ",data[j]);
+                    case "FindMax":
+                        Console.WriteLine(FindMax(inputData));
+                        checkFind = true;
+                        break;
+                    case "FindMin":
+                        Console.WriteLine(FindMin(inputData));
+                        checkFind = true;
+                        break;
+                    case "FindMean":
+                        Console.WriteLine(FindMean(inputData));
+                        checkFind = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid mode");
+                        break;
                 }
-                Console.WriteLine();
-            }
-}
-        
+            } while (checkFind == false);
+        }
     }
 }
