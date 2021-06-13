@@ -1,85 +1,85 @@
 ﻿using System;
 
-namespace Final_3
+namespace Final_4
 {
     class Program
     {
-        static double FindMax(double[] data)
-        {
-            double maxValue = 0; 
-            for(int i = 0; i< data.Length-1; i++)
-            {
-                maxValue = Math.Max(data[i], data[i + 1]);
-            }
-            return maxValue;
 
-        }
-        static double FindMin(double[] data)
-        {
-            double minValue = 0;
-            for (int i = 0; i < data.Length-1 - 1; i++)
-            {
-                minValue = (int)Math.Min(data[i], data[i + 1]);
-            }
-            return minValue;
-        }
-        static double FindMean(double[] data)
-        {
-            double meanValue = 0;
-            for(int i = 0; i < data.Length; i++)
-            {
-                meanValue += data[i];
-            }
-            meanValue /= data.Length;
-            return meanValue;
-        }
         static void Main(string[] args)
         {
-            bool checkInput = false;
-            bool checkFind = false;
-            double[] inputData =new double[0];
-            //inputnumber
-            do
+            Console.Write("Input1: ");
+            int numCity = int.Parse(Console.ReadLine()); //กรอกจำนวนเมืองทั้งหมด
+            string[] cityID = new string[numCity];
+            int[] nearbyCityID = new int[numCity];
+            int[] covid19Level = new int[numCity];
+
+
+            for (int i = 0; i < numCity; i++) //กรอกชื่อเมือง
             {
-                string input = Console.ReadLine();
-                if (input == "End")
+                Console.Write("Input2: ");
+                cityID[i] = Console.ReadLine();
+                Console.Write("Input3: ");
+                int numNearbyCity = int.Parse(Console.ReadLine()); //กรอกจำนวนเมืองที่อยู่ติดกัน
+                
+                for (int j = 0; j < numNearbyCity; j++) //กรอกเลขเมืองที่อยู่ติดกัน
                 {
-                    checkInput = true;
-                }
-                else
-                {
-                    double[] collection = new double[inputData.Length + 1];
-                    for(int i = 0; i < inputData.Length; i++)
+                    int addNearbyID;
+                    bool checkNearbyCityID = false;
+                    do //เช็คกรอกผิด
                     {
-                        collection[i] = inputData[i];
-                    }
-                    collection[collection.Length - 1] = double.Parse(input);
-                    inputData = collection;
+                        Console.Write("Input4: ");
+                        addNearbyID = int.Parse(Console.ReadLine()); 
+                        
+                            if (addNearbyID > numCity || addNearbyID == i)
+                            {
+                                Console.WriteLine("Invalid ID");
+
+                            }
+                            else
+                            {
+                                checkNearbyCityID = true;
+                            }
+                        
+                            
+                        
+                    } while (checkNearbyCityID == false);
+                    Console.WriteLine("+");
+                    nearbyCityID[i] = addNearbyID;
                 }
-            } while (checkInput == false);
-            //inputmethod
+            }
+            for (int i = 0; i < numCity; i++)
+            {
+                covid19Level[i] = 0;
+            }
+            bool checkEnd = false;
             do
             {
-                string inputFind = Console.ReadLine();
-                switch (inputFind)
+                for (int i = 0; i < numCity; i++)
                 {
-                    case "FindMax":
-                        Console.WriteLine(FindMax(inputData));
-                        checkFind = true;
+                    Console.WriteLine("{0} {1} {2}", i, cityID[i], covid19Level[0]);
+                }
+                string situation = Console.ReadLine();
+                switch (situation)
+                {
+                    case "Outbreak":
+
                         break;
-                    case "FindMin":
-                        Console.WriteLine(FindMin(inputData));
-                        checkFind = true;
+                    case "Vaccinate":
+
                         break;
-                    case "FindMean":
-                        Console.WriteLine(FindMean(inputData));
-                        checkFind = true;
+                    case "Lockdown":
+
                         break;
-                    default:
-                        Console.WriteLine("Invalid mode");
+                    case "Exit":
+                        checkEnd = true;
                         break;
                 }
-            } while (checkFind == false);
+
+            } while (checkEnd==false);
+
+
+            
         }
     }
 }
+
